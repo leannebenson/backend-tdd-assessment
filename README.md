@@ -74,7 +74,7 @@ program should print the following usage message:
 
     positional arguments:
         text         text to be manipulated
-
+`
     optional arguments:
         -h, --help   show this help message and exit
         -u, --upper  convert text to uppercase
