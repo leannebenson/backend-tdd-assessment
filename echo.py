@@ -19,6 +19,7 @@ def create_parser():
     parser.add_argument('-t', '--title', action='store_true',
                         help="Transforms the message to Title Case.")
     return parser
+    
 def main(args):
     """Implementation of echo"""
     parser = create_parser()

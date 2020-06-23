@@ -16,15 +16,15 @@ import argparse
 import unittest
 import subprocess
 from io import StringIO
-
 # devs: change this to 'soln.echo' to run this suite against the solution
 PKG_NAME = 'echo'
-
-
 # This is a helper class for the main test class
 # Students can use this class object in their code
+
+
 class Capturing(list):
     """Context Mgr helper for capturing stdout from a function call"""
+
     def __enter__(self):
         self._stdout = sys.stdout
         sys.stdout = self._stringio = StringIO()
@@ -34,9 +34,9 @@ class Capturing(list):
         self.extend(self._stringio.getvalue().splitlines())
         del self._stringio    # free up some memory
         sys.stdout = self._stdout
-
-
 # Students can use this function in their code
+
+
 def run_capture(pyfile, args=()):
     """
     Runs a python program in a separate process,
@@ -47,15 +47,15 @@ def run_capture(pyfile, args=()):
     p = subprocess.Popen(
         cmd,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+    )
     stdout, stderr = p.communicate()
     stdout = stdout.decode().splitlines()
     stderr = stderr.decode().splitlines()
     assert stdout or stderr, "The program is not printing any output"
     return stdout, stderr
-
-
 # Student shall complete this TestEcho class so that all tests run and pass.
+
+
 class TestEcho(unittest.TestCase):
     """Main test fixture for 'echo' module"""
     @classmethod
@@ -69,8 +69,8 @@ class TestEcho(unittest.TestCase):
         cls.funcs = {
             k: v for k, v in inspect.getmembers(
                 cls.module, inspect.isfunction
-                )
-            }
+            )
+        }
         # check the module for required functions
         assert "main" in cls.funcs, "Missing required function main()"
         assert "create_parser" in cls.funcs, "Missing required function create_parser()"
@@ -87,7 +87,6 @@ class TestEcho(unittest.TestCase):
         self.assertIsInstance(
             result, argparse.ArgumentParser,
             "create_parser() function is not returning a parser object")
-
     #
     # Students: add more parser tests here
     #
@@ -104,15 +103,63 @@ class TestEcho(unittest.TestCase):
         self.assertEqual(
             stdout[0], args[0],
             "The program is not performing simple echo"
-            )
+        )
 
     def test_lower_short(self):
         """Check if short option '-l' performs lowercasing"""
         args = ["-l", "HELLO WORLD"]
-        with Capturing() as output:
-            self.module.main(args)
-        assert output, "The program did not print anything."
-        self.assertEqual(output[0], "hello world")
+        stdout, stderr = run_capture(self.module.__file__, args)
+        self.assertEqual(
+            stdout[0], "hello world", "failed tolower"
+        )
+
+    def test_upper_short(self):
+        """Check if short option '-l' performs lowercasing"""
+        args = ["-u", "hello world"]
+        stdout, stderr = run_capture(self.module.__file__, args)
+        self.assertEqual(
+            stdout[0], "HELLO WORLD", "failed toUpper"
+        )
+
+    def test_title_short(self):
+        args = ["-t", "hello world"]
+        stdout, stderr = run_capture(self.module.__file__, args)
+        self.assertEqual(
+            stdout[0], "Hello World", "failed title"
+        )
+
+    def test_upper_long(self):
+        args = ["--upper", "hello world"]
+        stdout, stderr = run_capture(self.module.__file__, args)
+        self.assertEqual(
+            stdout[0], "HELLO WORLD", "failed upper-long"
+        )
+
+    def test_lower_long(self):
+        args = ["--lower", "HELLO WORLD"]
+        stdout, stderr = run_capture(self.module.__file__, args)
+        self.assertEqual(
+            stdout[0], "hello world", "failed lower-long"
+        )
+
+    def test_title_long(self):
+        args = ["--title", "HELLO WORLD"]
+        stdout, stderr = run_capture(self.module.__file__, args)
+        self.assertEqual(
+            stdout[0], "Hello World", "failed title-long"
+        )
+
+    def test_multiple_long(self):
+        args = ["-tul", "HELLO WORLD"]
+        stdout, stderr = run_capture(self.module.__file__, args)
+        self.assertEqual(
+            stdout[0], "Hello World", "failed multiple-args"
+        )
+    #    with Capturing() as output:
+    #        self.module.main(args)
+    #    assert output, "The program did not print anything."
+    #    self.assertEqual(output[0], "hello world")
+
 
     #
     # Students: add more cmd line options tests here.
