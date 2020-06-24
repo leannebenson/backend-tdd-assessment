@@ -56,9 +56,24 @@ def run_capture(pyfile, args=()):
 # Student shall complete this TestEcho class so that all tests run and pass.
 
 
+# def test_help(self):
+#     """Running the program without arguments should show usage."""
+
+#     # Run the command `python ./echo.py -h` in a separate process, then
+#     # collect its output.
+#     process = subprocess.Popen(
+#         ["python", "./echo.py", "-h"],
+#         stdout=subprocess.PIPE)
+#     stdout, _ = process.communicate()
+#     with open("USAGE") as f:
+#         usage = f.read()
+
+#     self.assertEqual(stdout, usage)
+
 class TestEcho(unittest.TestCase):
     """Main test fixture for 'echo' module"""
     @classmethod
+
     def setUpClass(cls):
         """Performs module import and suite setup at test-runtime"""
         # check for python3
@@ -90,6 +105,19 @@ class TestEcho(unittest.TestCase):
     #
     # Students: add more parser tests here
     #
+    def test_help(self):
+        """Running the program without arguments should show usage."""
+
+    # Run the command `python ./echo.py -h` in a separate process, then
+    # collect its output.
+        process = subprocess.Popen(
+        ["python", "./echo.py", "-h"],
+        stdout=subprocess.PIPE)
+        stdout, _ = process.communicate()
+        with open("USAGE") as f:
+            usage = f.read()
+
+        self.assertEqual(stdout, usage)
 
     def test_echo(self):
         """Check if main() function prints anything at all"""
